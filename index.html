@@ -2167,5 +2167,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
  
  </script>
+    <style>
+/* 1. تفصیل کا فکس */
+.line-clamp-1,.line-clamp-2,.line-clamp-3,[class*="line-clamp"]{-webkit-line-clamp:unset !important;display:block !important;overflow:visible !important;white-space:pre-wrap !important;max-height:none !important;}
+#category-bar{display:flex;gap:8px;overflow-x:auto;padding:12px 10px;margin:10px 0;}
+.cat-btn{padding:8px 18px;border-radius:20px;border:1px solid #ddd;background:#f1f1f1;cursor:pointer;white-space:nowrap;}
+.cat-btn.active{background:#111;color:white;}
+</style>
+
+<div id="category-bar" style="display:none;">
+  <button class="cat-btn active" data-cat="all">سب کچھ</button>
+  <button class="cat-btn" data-cat="kapre">کپڑے</button>
+  <button class="cat-btn" data-cat="jewellery">جیولری</button>
+  <button class="cat-btn" data-cat="shoes">جوتے</button>
+  <button class="cat-btn" data-cat="bags">بیگ</button>
+</div>
+
+<script>
+// ایک ہی جگہ سے سب کنٹرول
+(function(){
+  // کیٹیگری بار کو پروڈکٹس سے اوپر لے آؤ
+  const check = setInterval(()=>{
+    const grid = document.querySelector('#products, #productGrid, [class*="product-grid"], main');
+    const bar = document.getElementById('category-bar');
+    if(grid && bar){
+      grid.parentNode.insertBefore(bar, grid);
+      bar.style.display = 'flex';
+      clearInterval(check);
+    }
+  }, 500);
+
+  // سرچ + کیٹیگری فلٹر
+  function doFilter(){
+    const term = (document.querySelector('input[type="search"], input[placeholder*="تلاش"], input[placeholder*="Search"], #searchInput')?.value || '').toLowerCase();
+    const activeCat = document.querySelector('.cat-btn.active')?.dataset.cat || 'all';
+    const cards = document.querySelectorAll('.product-card, [class*="product-card"], .product');
+    cards.forEach(card=>{
+      const txt = card.innerText.toLowerCase();
+      const cat = (card.dataset.category || card.getAttribute('data-cat') || 'other').toLowerCase();
+      const matchSearch = txt.includes(term);
+      const matchCat = activeCat === 'all' || txt.includes(activeCat) || cat.includes(activeCat);
+      card.style.display = (matchSearch && matchCat) ? '' : 'none';
+    });
+  }
+
+  document.addEventListener('input', (e)=>{
+    if(e.target.matches('input[type="search"], input[placeholder*="تلاش"], input[placeholder*="Search"], #searchInput')){
+      doFilter();
+    }
+  });
+
+  document.getElementById('category-bar').addEventListener('click', (e)=>{
+    if(e.target.classList.contains('cat-btn')){
+      document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+      e.target.classList.add('active');
+      doFilter();
+      // الگ پیج جیسا لنک
+      history.replaceState(null, '', '?category=' + e.target.dataset.cat);
+    }
+  });
+
+  // ایڈمن پینل میں کیٹیگری فیلڈ خود بخود ایڈ کرنا
+  const adminCheck = setInterval(()=>{
+    const adminForm = document.querySelector('#adminModal, #adminPanel, [id*="admin"] form');
+    if(adminForm && !document.getElementById('autoCategoryField')){
+      const div = document.createElement('div');
+      div.id = 'autoCategoryField';
+      div.innerHTML = '<label>کیٹیگری (ایڈمن سے)</label><select style="width:100%;padding:8px;margin:5px 0;"><option value="kapre">کپڑے</option><option value="jewellery">جیولری</option><option value="shoes">جوتے</option><option value="bags">بیگ</option><option value="other">دیگر</option></select>';
+      const saveBtn = adminForm.querySelector('button[type="submit"], button');
+      if(saveBtn) adminForm.insertBefore(div, saveBtn);
+    }
+  }, 1000);
+})();
+</script>
 </body>
 </html>
