@@ -2232,46 +2232,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 <script>
-// فائنل - کیٹیگری مینجر + آپ کی جی میل لاک
-const ADMIN_EMAIL = "abdullahkarim76128@gmail.com";
+<script>
 setInterval(()=>{
   try{
-    let admin = document.querySelector('[id*="admin"]');
+    // ایڈمن کو اس کے اندر لکھے ہوئے اردو الفاظ سے ڈھونڈو
+    let allDivs = document.querySelectorAll('div');
+    let admin = null;
+    allDivs.forEach(d=>{ if(d.innerText && d.innerText.includes('نئی پروڈکٹ اسٹور میں شامل کریں')) admin = d.closest('div'); });
+    if(!admin) admin = document.querySelector('[class*="admin"]');
     if(!admin || document.getElementById('categoryManagerBox')) return;
 
-    // جی میل چیک
-    let userEmail = localStorage.getItem('userEmail') || (firebase.auth().currentUser ? firebase.auth().currentUser.email : null);
-    // اگر آپ چاہیں تو یہ لائن چیک کرے گی، فی الحال ہم نے لاک نرم رکھا ہے تاکہ آپ کو باکس نظر آئے
-
-    let cats = JSON.parse(localStorage.getItem('myShopCats') || '["kapre","jewellery","shoes","bags","garments"]');
+    let cats = JSON.parse(localStorage.getItem('myShopCats') || '["kapre","jewellery","shoes","bags"]');
     let box = document.createElement('div');
     box.id='categoryManagerBox';
-    box.style='background:#d1e7dd;border:2px solid green;padding:15px;border-radius:10px;margin:15px 10px;';
-    box.innerHTML=`<h3 style="margin:0 0 10px 0;">📂 کیٹیگری مینجر (Global)</h3>
-      <div style="display:flex;gap:5px;"><input id="newCatName" placeholder="نئی کیٹیگری لکھیں" style="flex:1;padding:8px;border-radius:8px;border:1px solid #ccc;"><button id="addCatBtn" style="background:black;color:white;padding:8px 14px;border-radius:8px;">Add</button></div>
-      <div id="catListAdmin" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;"></div>
-      <p style="font-size:12px;color:#555;margin-top:8px;">نوٹ: یہ کیٹیگری اب ہر کسٹمر کو نظر آئے گی</p>`;
+    box.style='background:#d1e7dd;border:2px solid green;padding:15px;border-radius:10px;margin:15px 10px;display:block !important;';
+    box.innerHTML=`<h3>📂 کیٹیگری مینجر (صرف ایڈمن)</h3><div style="display:flex;gap:5px;"><input id="newCatName" placeholder="نئی کیٹیگری" style="flex:1;padding:8px;"><button id="addCatBtn" style="background:black;color:white;padding:8px 14px;">Add</button></div><div id="catListAdmin" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;"></div>`;
 
-    let f=admin.querySelector('form'); if(f) f.parentNode.insertBefore(box,f); else admin.prepend(box);
-    
-    function renderAdminCats(){
-      let l=document.getElementById('catListAdmin'); if(!l) return;
-      l.innerHTML=cats.map(c=>`<span style="background:white;padding:5px 10px;border-radius:20px;border:1px solid #ccc;font-size:13px;">${c} <b style="color:red;cursor:pointer;margin-left:5px;" onclick="this.parentElement.remove(); let a=JSON.parse(localStorage.getItem('myShopCats')||'[]'); localStorage.setItem('myShopCats', JSON.stringify(a.filter(x=>x!='${c}'))); if(window.db) window.db.collection('categories').where('name','==','${c}').get().then(s=>s.forEach(d=>d.ref.delete()));">X</b></span>`).join('');
-    }
-    renderAdminCats();
-    
+    // ایڈمن کے سب سے اوپر لگا دو
+    if(admin) admin.prepend(box); else document.body.prepend(box);
+
     document.getElementById('addCatBtn').onclick=()=>{
       let v=document.getElementById('newCatName').value.trim().toLowerCase();
       if(!v) return;
-      if(!cats.includes(v)) cats.push(v);
+      cats.push(v);
       localStorage.setItem('myShopCats', JSON.stringify(cats));
-      // Firebase میں بھی سیو تاکہ ہر کسی کو نظر آئے
-      try{ (window.db || firebase.firestore()).collection("categories").add({name:v}); }catch(e){}
-      document.getElementById('newCatName').value='';
-      renderAdminCats();
+      location.reload();
     };
-  }catch(e){}
-},1200);
+  }catch(e){ console.log(e); }
+},800);
 </script>
 </body>
 </html>
