@@ -292,6 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <i class="fa-brands fa-whatsapp text-lg"></i>
                         <span>واٹس ایپ پر آرڈر بھیجیں</span>
                     </button>
+                    <!-- کیٹیگری مینجر - ایڈمن پینل کے لیے -->
+
                 </form>
             </div>
         </div>
@@ -2227,18 +2229,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // ایڈمن پینل میں کیٹیگری فیلڈ خود بخود ایڈ کرنا
-  const adminCheck = setInterval(()=>{
-    const adminForm = document.querySelector('#adminModal, #adminPanel, [id*="admin"] form');
-    if(adminForm && !document.getElementById('autoCategoryField')){
-      const div = document.createElement('div');
-      div.id = 'autoCategoryField';
-      div.innerHTML = '<label>کیٹیگری (ایڈمن سے)</label><select style="width:100%;padding:8px;margin:5px 0;"><option value="kapre">کپڑے</option><option value="jewellery">جیولری</option><option value="shoes">جوتے</option><option value="bags">بیگ</option><option value="other">دیگر</option></select>';
-      const saveBtn = adminForm.querySelector('button[type="submit"], button');
-      if(saveBtn) adminForm.insertBefore(div, saveBtn);
+
+</script>
+<script>
+// فائنل کوڈ - کیٹیگری سب کو نظر آئے + ایڈمن صرف آپ کا
+const ADMIN_EMAIL = "abdullahkarim76128@gmail.com";
+
+setInterval(()=>{
+  try{
+    // 1. کیٹیگری Firebase سے لوڈ کرو - سب کو نظر آئے گی
+    if(window.db || window.firestore || firebase.firestore){
+      const db = window.db || firebase.firestore();
+      db.collection("categories").onSnapshot((snap)=>{
+        const cats = snap.docs.map(d=>d.data().name);
+        // مین پیج کی کیٹیگری بار اپڈیٹ
+        const bar = document.getElementById('category-bar');
+        if(bar){
+          bar.innerHTML = '<button class="cat-btn active" data-cat="all">سب کچھ</button>' + cats.map(c=>`<button class="cat-btn" data-cat="${c}">${c}</button>`).join('');
+        }
+        // ایڈمن لسٹ اپڈیٹ
+        const list = document.getElementById('catListAdmin');
+        if(list){
+          list.innerHTML = cats.map(c=>`<span style="background:white;padding:5px 10px;border-radius:15px;border:1px solid #ddd;">${c} <b style="color:red;cursor:pointer;" onclick="deleteCategory('${c}')">X</b></span>`).join('');
+        }
+      });
     }
-  }, 1000);
-})();
+
+    // 2. ایڈمن پینل صرف آپ کی جی میل سے
+    const admin = document.querySelector('[id*="admin"]');
+    if(!admin || document.getElementById('categoryManagerBox')) return;
+
+    firebase.auth().onAuthStateChanged((user)=>{
+      if(!user || user.email !== ADMIN_EMAIL){
+        // اگر آپ لاگ ان نہیں تو ایڈمن پینل کو ہائیڈ کر دو
+        if(admin) admin.style.display = 'none';
+        return;
+      }
+      // آپ لاگ ان ہیں تو کیٹیگری مینجر دکھاؤ
+      let box = document.createElement('div');
+      box.id='categoryManagerBox';
+      box.style='background:#d1e7dd;border:2px solid green;padding:15px;border-radius:10px;margin:10px;';
+      box.innerHTML=`<h3>📂 کیٹیگری مینجر (Global - سب کو نظر آئے گی)</h3><div style="display:flex;gap:5px;"><input id="newCatName" placeholder="نئی کیٹیگری" style="flex:1;padding:8px;"><button id="addCatBtn" style="background:black;color:white;padding:8px 12px;border-radius:8px;">Add</button></div><div id="catListAdmin" style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;"></div>`;
+      let f=admin.querySelector('form'); if(f) f.parentNode.insertBefore(box,f); else admin.prepend(box);
+      
+      document.getElementById('addCatBtn').onclick=()=>{
+        let v=document.getElementById('newCatName').value.trim().toLowerCase();
+        if(v){ (window.db || firebase.firestore()).collection("categories").add({name:v}); document.getElementById('newCatName').value=''; }
+      };
+      window.deleteCategory = (cname)=>{
+        if(!confirm(cname+' ڈیلیٹ کریں؟')) return;
+        const db = window.db || firebase.firestore();
+        db.collection("categories").where("name","==",cname).get().then(s=>{s.forEach(doc=>doc.ref.delete())});
+      };
+    });
+  }catch(e){}
+},1500);
 </script>
 </body>
 </html>
