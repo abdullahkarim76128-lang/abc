@@ -2107,6 +2107,59 @@
                 }, 300);
             }
         }
-    </script>
+  <!-- ====== NovaMart Final Code - Easypaisa + Description Fix ====== -->
+<style>
+/* تفصیل پوری دکھانے کے لیے */
+.desc, .description, [class*="desc"] {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  white-space: pre-wrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  max-height: none !important;
+  height: auto !important;
+}
+#easypaisa-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #111; color: white;
+  padding: 10px 15px; display: flex;
+  justify-content: center; align-items: center;
+  gap: 10px; z-index: 99999;
+}
+#easypaisa-bar button {
+  background: #00b33c; color: white; border: none;
+  padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+}
+body { padding-top: 45px !important; }
+</style>
+
+<div id="easypaisa-bar" style="display:none;">
+  <span>Easypaisa: <b id="ep-number">...</b></span>
+  <button onclick="copyEasypaisa()">Copy</button>
+</div>
+
+<script>
+let currentEasypaisa = "";
+async function loadEasypaisa() {
+  try {
+    const docRef = firebase.firestore().collection('config').doc('settings');
+    const docSnap = await docRef.get();
+    if (docSnap.exists) {
+      const number = docSnap.data().easypaisaNumber;
+      if(number){
+        document.getElementById('ep-number').innerText = number;
+        document.getElementById('easypaisa-bar').style.display = 'flex';
+        currentEasypaisa = number;
+      }
+    }
+  } catch(e){ console.log(e); }
+}
+loadEasypaisa();
+function copyEasypaisa() {
+  navigator.clipboard.writeText(currentEasypaisa).then(() => {
+    alert("نمبر کاپی ہو گیا: " + currentEasypaisa);
+  });
+}
+</script>  </script>
 </body>
 </html>
