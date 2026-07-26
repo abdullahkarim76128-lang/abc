@@ -18,6 +18,50 @@
   line-height: 1.8 !important;
 }
 </style>
+    <style>
+/* طاقتور فکس - ہر قسم کی کٹنگ ختم */
+.line-clamp-1, .line-clamp-2, .line-clamp-3, .line-clamp-4, [class*="line-clamp"] {
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  display: block !important;
+  overflow: visible !important;
+}
+.truncate {
+  white-space: pre-wrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+p, .product-card p {
+  max-height: none !important;
+  height: auto !important;
+}
+</style>
+<script>
+// Universal Search Fix - اردو اور انگریزی دونوں میں کام کرے گا
+document.addEventListener('DOMContentLoaded', function() {
+  // سرچ بار ڈھونڈو
+  const searchInput = document.querySelector('input[type="search"], input[placeholder*="تلاش"], input[placeholder*="Search"], #searchInput, #search');
+  
+  if (!searchInput) {
+    console.log("Search bar not found");
+    return;
+  }
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    const products = document.querySelectorAll('.product-card, .product, [class*="product-card"]');
+
+    products.forEach(function(card) {
+      const text = card.innerText.toLowerCase();
+      if (text.includes(term)) {
+        card.style.display = "";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  });
+});
+</script>
     <!-- Tailwind CSS for modern responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for beautiful icons -->
