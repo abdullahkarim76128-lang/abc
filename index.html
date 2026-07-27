@@ -4,21 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شاندار ڈیجیٹل مارکیٹ - ایڈمن کنٹرول سسٹم</title>
-   /* === تصویر پوری دکھانے کا فائنل فکس === */
-.product-card img,
-div[class*="product"] img,
-img[src*="http"] {
-  object-fit: contain !important;
-  object-position: center top !important;
-  background: #ffffff !important;
-  height: 520px !important;
-  max-height: 520px !important;
-  width: 100% !important;
-}
-.product-card {
-  height: auto !important;
-  overflow: visible !important;
-}
+ 
     <style>
 /* تفصیل پوری دکھانے کے لیے فکس - محفوظ کوڈ */
 .product-desc, .description, [class*="desc"], [class*="description"] {
@@ -2275,6 +2261,19 @@ setInterval(()=>{
     };
   }catch(e){ console.log(e); }
 },800);
+</script>
+    <script>
+// تصویر پوری دکھانے کا زبردستی فکس
+setInterval(()=>{
+  document.querySelectorAll('.product-card img, img').forEach(img=>{
+    if(img.src.includes('http') && img.width > 100){
+      img.style.setProperty('object-fit','contain','important');
+      img.style.setProperty('background','white','important');
+      img.style.setProperty('height','520px','important');
+      img.style.setProperty('width','100%','important');
+    }
+  });
+}, 1000);
 </script>
 </body>
 </html>
