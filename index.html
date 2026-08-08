@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 <head>
+  .product-card {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.product-card .product-image,
+.product-card picture {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+.product-card .product-image img,
+.product-card picture img,
+.product-card > img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+}
 <style>
 .product-card img,
 .product-image,
