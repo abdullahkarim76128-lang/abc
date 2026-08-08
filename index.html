@@ -8,10 +8,18 @@
 .product-card picture img {
   width: 100% !important;
   height: auto !important;
-  max-height: 400px !important;
+  min-height: 0 !important;
+  max-height: none !important;
   object-fit: contain !important;
   object-position: center !important;
   display: block !important;
+}
+
+.product-card,
+.product-card > div {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
 }
 </style>
     <meta charset="UTF-8">
@@ -2277,23 +2285,17 @@ setInterval(()=>{
 </script>
     <script>
 // تصویر پوری دکھانے کا زبردستی فکس
-setInterval(()=>{
-  document.querySelectorAll('.product-card img, img').forEach(img=>{
-   <script>
+<script>
 setInterval(() => {
-  document.querySelectorAll('.product-card img, img').forEach(img => {
-    if (img.src.includes('http')) {
-      img.style.setProperty('object-fit', 'contain', 'important');
-      img.style.setProperty('background', 'white', 'important');
-      img.style.setProperty('height', 'auto', 'important');
-      img.style.setProperty('max-height', 'none', 'important');
-      img.style.setProperty('width', '100%', 'important');
-    }
-  });
-}, 1000);
-</script>
-    }
-  });
+    document.querySelectorAll('.product-card img, img').forEach(img => {
+        if (img.src.includes('http') && img.width > 100) {
+            img.style.setProperty('object-fit', 'contain', 'important');
+            img.style.setProperty('background', 'white', 'important');
+            img.style.setProperty('height', 'auto', 'important');
+            img.style.setProperty('max-height', 'none', 'important');
+            img.style.setProperty('width', '100%', 'important');
+        }
+    });
 }, 1000);
 </script>
 </body>
