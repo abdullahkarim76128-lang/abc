@@ -2279,11 +2279,19 @@ setInterval(()=>{
 // تصویر پوری دکھانے کا زبردستی فکس
 setInterval(()=>{
   document.querySelectorAll('.product-card img, img').forEach(img=>{
-    if(img.src.includes('http') && img.width > 100){
-      img.style.setProperty('object-fit','contain','important');
-      img.style.setProperty('background','white','important');
-      img.style.setProperty('height','520px','important');
-      img.style.setProperty('width','100%','important');
+   <script>
+setInterval(() => {
+  document.querySelectorAll('.product-card img, img').forEach(img => {
+    if (img.src.includes('http')) {
+      img.style.setProperty('object-fit', 'contain', 'important');
+      img.style.setProperty('background', 'white', 'important');
+      img.style.setProperty('height', 'auto', 'important');
+      img.style.setProperty('max-height', 'none', 'important');
+      img.style.setProperty('width', '100%', 'important');
+    }
+  });
+}, 1000);
+</script>
     }
   });
 }, 1000);
